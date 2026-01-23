@@ -50,9 +50,9 @@ jobs:
         tags: | 
           latest
           ${{ github.sha }}
-        context: build-context
+        context: execution-environment/build-context
         containerfiles: |
-          build-context/Containerfile
+          Containerfile
 
     - name: Login to registry
       uses: redhat-actions/podman-login@v1
