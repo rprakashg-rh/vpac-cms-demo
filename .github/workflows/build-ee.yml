@@ -1,0 +1,29 @@
+---
+name: Github actions workflow to build execution environment images
+on:
+    push:
+        branches:
+        - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install ansible-builder
+      run: |
+        pip install ansible-builder==3.*
+
+    - name: Build EE image
+
+    - name: Push EE image to registry
