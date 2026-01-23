@@ -41,7 +41,7 @@ jobs:
       run: |
         ansible-builder create -f execution-environment/ee.yml \
             --output-filename Containerfile \
-            --context build-context
+            --context execution-environment/build-context
             
     - name: Build EE image
       uses: redhat-actions/buildah-build@v2
