@@ -64,7 +64,7 @@ jobs:
         registry: ${{ env.IMAGE_REGISTRY }}
 
     - name: Save the Containerfile as build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v6
       with:
         name: containerfile
         path: ./execution-environment/build-context/Containerfile  
