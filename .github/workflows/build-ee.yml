@@ -30,6 +30,13 @@ jobs:
       run: |
         pip install ansible-builder==3.*
     
+    - name: Login to regisry.redhat.io
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: registry.redhat.io
+        username: ${{ secrets.REGISTRY_USER }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+        
     - name: Generate Containerfile with ansible-builder
       run: |
         ansible-builder create -f execution-environment/ee.yml \
