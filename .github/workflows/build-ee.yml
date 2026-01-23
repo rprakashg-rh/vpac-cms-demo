@@ -32,7 +32,7 @@ jobs:
     
     - name: Generate Containerfile with ansible-builder
       run: |
-        ansible-builder create -f ee.yml \
+        ansible-builder create -f execution-environment/ee.yml \
             --output-filename Containerfile \
             --context build-context
             
