@@ -4,6 +4,11 @@ on:
     push:
         branches:
         - main
+        paths:
+        - execution-environment
+env:
+    IMAGE_NAME: ${{ secrets.EE_IMAGE_NAME }}
+    IMAGE_REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,7 +28,42 @@ jobs:
     - name: Install ansible-builder
       run: |
         pip install ansible-builder==3.*
-
+    
+    - name: Generate Containerfile with ansible-builder
+      run: |
+        ansible-builder create -f ee.yml \
+            --output-filename Containerfile \
+            --context build-context
+            
     - name: Build EE image
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ${{ env.IMAGE_NAME }}
+        tags: | 
+          latest
+          ${{ github.sha }}
+        context: build-context
+        containerfiles: |
+          build-context/Containerfile
+
+    - name: Login to registry
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: ${{ env.IMAGE_REGISTRY }}
+        username: ${{ secrets.REGISTRY_USER }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - name: Push EE image to registry
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ env.IMAGE_NAME }}
+        tags: |
+            latest
+            ${{ github.sha }}
+        registry: ${{ env.IMAGE_REGISTRY }}
+
+    - name: Save the Containerfile as build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: containerfile
+        path: ./execution-environment/build-context/Containerfile  
