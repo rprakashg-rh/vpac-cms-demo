@@ -52,7 +52,7 @@ jobs:
           ${{ github.sha }}
         context: execution-environment/build-context
         containerfiles: |
-          Containerfile
+          execution-environment/build-context/Containerfile
 
     - name: Login to registry
       uses: redhat-actions/podman-login@v1
