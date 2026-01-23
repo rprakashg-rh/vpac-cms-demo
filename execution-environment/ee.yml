@@ -1,5 +1,5 @@
 ---
-# Definition for execution environment
+# Definition for execution environment images
 version: 3
 
 images:
