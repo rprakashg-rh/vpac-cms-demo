@@ -1,33 +1,174 @@
 controller_execution_environments:
+- name: Demo execution environment
+  image: quay.io/rgopinat/vpac-cms-demo-ee:latest
+  pull: missing
 
 controller_credential_types:
+- name: Controller API credentials
+  kind: cloud
+  inputs:
+    fields:
+    - id: controller_username
+      type: string
+      label: "Controller API username"
+    - id: controller_password
+      type: string
+      label: "Controller API password"
+      secret: true
+    required:
+    - controller_username
+    - controller_password
+  injectors:
+    extra_vars:
+      controller_username: !unsafe "{{ controller_username }}"
+      controller_password: !unsafe "{{ controller_password }}"
 
 controller_hosts:
+- name: imagebuilder
+  inventory: "Image Builder"
+  variables:
+    ansible_connection: local
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  enabled: true
+- name: dtech2026dell1
+  inventory: Virtualization Hosts
+  variables:
+    ansible_host: 192.168.100.51
+    ansible_port: 22
+  enabled: true  
+- name: dtech2026dell2
+  inventory: Virtualization Hosts
+  variables:
+    ansible_host: 192.168.100.52
+    ansible_port: 22
+  enabled: true  
+- name: dtech2026advantech
+  inventory: Virtualization Hosts
+  variables:
+    ansible_host: 192.168.100.53
+    ansible_port: 22
+  enabled: true
+
+controller_groups:
+- name: Virtualization Hosts
+  description: "Group of Virtualization Hosts"
+  inventory: Virtualization Hosts
+  hosts:
+  - dtech2026dell1
+  - dtech2026dell2
+  - dtech2026advantech
+  variables:
+    group_name: "Virtualization Hosts"
 
 controller_organizations:
+- name: "{{ organization_name }}"
 
-controller_users:
+controller_user_accounts:
+- username: "{{ aap_user }}"
+  password: "{{ aap_user_password }}"
+  email: "{{ aap_user }}@no-reply.com"
+  organization: "{{ organization_name }}"
+  state: present
 
 controller_roles:
+- user: "{{ aap_user }}"
+  organization: "{{ organization_name }}"
+  role: admin
+  state: present
 
 controller_inventories:
+- name: Image Builder
+  organization: "{{ organization_name }}"
+  description: "Image Builder inventory"
+  variables:
+    inventory_name: "Image Builder"
+- name: Virtualization Hosts
+  organization: "{{ organization_name }}"
+  description: "Virtualization Hosts inventory"
+  variables:
+    inventory_name: "Virtualization Hosts"
 
 controller_credentials:
+- name: Gitea Credentials
+  organization: "{{ organization_name }}"
+  credential_type: Source Control
+  inputs:   
+    username: "{{ gitea_user }}"
+    password: "{{ gitea_user_password }}"
+
+- name: Image Builder Credentials
+  organization: "{{ organization_name }}"
+  credential_type: Machine
+  inputs:
+    username: "{{ admin_user }}"
+    password: "{{ admin_user_password }}"
+    become_password: "{{ admin_user_password }}"
+
+- name: Controller API Credentials
+  organization: "{{ organization_name }}"
+  credential_type: Controller API credentials
+  inputs:
+    controller_username: "{{ aap_user }}"
+    controller_password: "{{ aap_user_password }}"
+
+- name: Demo vault
+  organization: "{{ organization_name }}"  
+  credential_type: Vault
+  inputs:
+    vault_password: "{{ vault_secret }}"
 
 controller_projects:
+- name: cms
+  organization: "{{ organization_name }}"
+  scm_type: git
+  scm_branch: main 
+  scm_url: http://{{ ansible_host }}:{{ gitea_port | default('3030') }}/{{ gitea_user }}/{{ aap_repo_name | default('aap') }}.git
+  credential: Gitea Credentials
 
 controller_templates:
-
-controller_workflows:
-
+- name: Create VPAC ISO
+  organization: "{{ organization_name }}"  
+  inventory: Image Builder
+  project: cms 
+  playbook: playbooks/create_vpac_iso.yml
+  ask_variables_on_launch: true
+  credentials:
+  - Image Builder Credentials
+  - Demo vault
+  execution_environment: Demo execution environment
+  become_enabled: true
+  extra_vars:
+    images_repo: "rhel"
+    files_path: "images"
+    image_definition_file: vpac-system.yml
 
 eda_users:
+- username: "{{ aap_user }}"
+  password: "{{ aap_user_password }}"
+  email: "{{ aap_user }}@no-reply.com"
+  roles:
+  - Auditor
 
 eda_credentials:
+- name: Gitea Credentials
+  credential_type: 'GitHub Personal Access Token'
+  username: "{{ gitea_admin_user }}"
+  secret: "{{ gitea_admin_password }}"
 
 eda_projects:
-
+- name: vpac
+  url: http://{{ ansible_host }}:{{ gitea_port | default('3030') }}/{{ gitea_admin_user }}/{{ eda_repo_name | default('eda') }}.git
+  credential: Gitea Credentials
+  
 eda_user_tokens:
+- name: Controller Token
 
 eda_rulebook_activations:
-
+- name: Gitea Hook
+  description: Listen for changes in gitea  
+  project: vpac
+  rulebook: rulebook.yml
+  decision_environment: Default Decision Environment
+  enabled: true
+  state: present
+  awx_token: Controller Token   

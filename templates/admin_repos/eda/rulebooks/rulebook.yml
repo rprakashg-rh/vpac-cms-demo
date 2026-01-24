@@ -1,0 +1,26 @@
+---
+{% raw %}
+- name: Listen for events on a webhook
+  hosts: all
+
+  sources:
+    - ansible.eda.webhook:
+        host: 0.0.0.0
+        port: "{% endraw %}{{ eda_webhook_port | default('5000') }}{% raw %}"
+  
+  rules:
+  - name: Create New ISO
+    condition: "'images/vpac-system.yml' in event.payload.commits[0].modified"
+    action:
+      run_job_template:
+        name: Create VPAC ISO
+        organization: "{% endraw %}{{ organization_name }}{% raw %}"
+        job_args:
+          limit: "{{ event.payload.inventory }}"
+          extra_vars:
+            images_repo: "rhel"
+            files_path: "images"
+            image_definition_file: "vpac-system.yml"
+
+  execution_strategy: "parallel"
+{% endraw %}  

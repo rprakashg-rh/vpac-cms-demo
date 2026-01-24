@@ -2,6 +2,9 @@
 - name: Centralized Management System Demo with Ansible Automation Platform
   hosts: cms
 
+  vars:
+    controller_validate_certs: false
+  
   tasks:
   - name: Load secrets from ansible vault
     ansible.builtin.include_vars:
@@ -19,15 +22,16 @@
     vars:
       config_imagebuilder: false
       config_influxdb: false
-      influxdb_user: admin
-      influxdb_password: r3dH4T1234!
       influxdb_org: redhat
       influxdb_bucket: vpac
       influxdb_retentionperiod: 0
       config_gitea: true
+      gitea_port: 3030
       gitea_admin_repos_template: ../templates/admin_repos
       gitea_user_repos_template: ../templates/user_repos
-      gitea_admin_user: gitea
-      gitea_admin_password: r3dH4T1
-      
+
       config_aap: false
+      aap_config_template: ../templates/aap_config.yml.j2
+      organization_name: vpac
+      aap_repo_name: "aap"
+      eda_repo_name: "eda"
