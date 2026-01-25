@@ -1,1 +1,2 @@
 playbooks/ansible.cfg
+execution-environment/build-context/**/*
