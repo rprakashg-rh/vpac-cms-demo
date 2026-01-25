@@ -1,0 +1,33 @@
+---
+# This playbook configures a target virtualization host for realtime workloads
+- name: Ansible playbook that configures a target virtualization host for RT workload deployment
+  hosts: virtualization_hosts
+  gather_facts: yes
+
+  vars:
+    ansible_python_interpreter: "{% raw %}{{ ansible_playbook_python }}{% endraw %}"
+    aap_validate_certs: false
+    aap_configuration_secure_logging: false
+  tasks:
+  - name: Clone git repo
+    delegate_to: localhost
+    block:
+    - name: Create temp dir
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: repos
+      register: tempdir
+    - name: Set in variable
+      ansible.builtin.set_fact:
+        repo_dir: "{% raw %}{{ tempdir.path }}{% endraw %}"
+    - name: Debug
+      ansible.builtin.debug:
+       msg: "repos_dir: {% raw %}{{ repos_dir }}{% endraw %}"
+    - name: Clone repo
+      ansible.builtin.shell:
+        cmd: "git clone http://{{ gitea_user }}:{{ gitea_user_password }}@{{ ansible_host }}:{{ gitea_port | default('3030') }}/{{ gitea_user }}/{% raw %}{{ images_repo }}{% endraw %}.git {% raw %}{{ repos_dir }}/{{ images_repo }}{% endraw %}"
+            
+  - name: Run the prepare system for rt role
+    ansible.builtin.import_role:
+      name: rprakashg.vpac.prepare_system_for_rt
+    

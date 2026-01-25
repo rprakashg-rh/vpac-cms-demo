@@ -11,7 +11,14 @@ collections:
   - name: kubernetes.core
   - name: containers.podman
   - name: infra.osbuild
-  - name: redhat_cop.controller_configuration
+  - name: ansible.platform
+    version: ">=2.6.0" # for AAP 2.6 this should be 2.6.0
+  - name: ansible.hub
+    version: ">=1.0.0"
+  - name: ansible.controller
+    version: ">=4.6.0" # for AAP 2.6 this should be 4.7.0
+  - name: ansible.eda
+    version: ">=2.5.0"
   - name: fedora.linux_system_roles
   - name: https://github.com/rprakashg/vpac.git,main
     type: git

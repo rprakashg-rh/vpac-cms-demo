@@ -6,8 +6,8 @@
   - "./vars/secrets.yml"
   vars:
     ansible_python_interpreter: "{% raw %}{{ ansible_playbook_python }}{% endraw %}"
-    controller_validate_certs: false
-    controller_configuration_credentials_secure_logging: false
+    aap_validate_certs: false
+    aap_configuration_secure_logging: false
   tasks:
   - name: Clone git repo
     delegate_to: localhost

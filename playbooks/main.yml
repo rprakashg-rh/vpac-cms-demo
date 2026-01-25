@@ -3,8 +3,9 @@
   hosts: cms
 
   vars:
-    controller_validate_certs: false
-    controller_hostname: "{{ ansible_host }}:8443"
+    aap_validate_certs: false
+    aap_hostname: "{{ ansible_host }}:8443"
+    eda_validate_certs: false
   tasks:
   - name: Load secrets from ansible vault
     ansible.builtin.include_vars:
@@ -35,6 +36,3 @@
       organization_name: vpac
       aap_repo_name: "aap"
       eda_repo_name: "eda"
-      eda_validate_certs: false
-      eda_host: "http://{{ ansible_host }}:8445"
-      eda_port: 5000
