@@ -1,7 +1,7 @@
 controller_execution_environments:
 - name: Demo execution environment
   image: quay.io/rgopinat/vpac-cms-demo-ee:latest
-  pull: missing
+  pull: always
 
 controller_credential_types:
 - name: Controller API credentials
@@ -60,10 +60,10 @@ controller_groups:
   variables:
     group_name: "Virtualization Hosts"
 
-controller_organizations:
+aap_organizations:
 - name: "{{ organization_name }}"
 
-controller_user_accounts:
+aap_user_accounts:
 - username: "{{ aap_user }}"
   password: "{{ aap_user_password }}"
   email: "{{ aap_user }}@no-reply.com"
@@ -102,6 +102,13 @@ controller_credentials:
     username: "{{ admin_user }}"
     password: "{{ admin_user_password }}"
     become_password: "{{ admin_user_password }}"
+- name: Virtual Host Credentials
+  organization: "{{ organization_name }}"
+  credential_type: Machine
+  inputs:
+    username: "{{ root_user }}"
+    password: "{{ root_user_password }}"
+    become_password: "{{ root_user_password }}"
 - name: Controller API Credentials
   organization: "{{ organization_name }}"
   credential_type: Controller API credentials
@@ -141,6 +148,7 @@ controller_templates:
     files_path: "images"
     image_definition_file: vpac-system.yml
     kickstart_definition_file: ks.yml
+    compose_job_id: ""
 
 eda_users:
 - username: "{{ aap_user }}"
@@ -160,7 +168,7 @@ eda_projects:
   url: http://{{ ansible_host }}:{{ gitea_port | default('3030') }}/{{ gitea_admin_user }}/{{ eda_repo_name | default('eda') }}.git
   credential: Gitea Credentials
   
-eda_user_tokens:
+eda_controller_tokens:
 - name: Controller Token
 
 eda_rulebook_activations:

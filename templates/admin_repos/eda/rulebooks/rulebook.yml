@@ -18,9 +18,12 @@
         job_args:
           limit: "{{ event.payload.inventory }}"
           extra_vars:
+            builder_blueprint_name: "vpac-rhel9-base"
+            skip_compose: false
             images_repo: "rhel"
             files_path: "images"
             image_definition_file: "vpac-system.yml"
-
+            kickstart_definition_file: ks.yml
+            compose_job_id: ""
   execution_strategy: "parallel"
 {% endraw %}  

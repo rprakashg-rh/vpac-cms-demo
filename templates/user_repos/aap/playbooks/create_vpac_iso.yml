@@ -2,12 +2,15 @@
 - name: Runs osbuild compose to build image installer
   hosts:
   - all
+  vars_files:
+  - "./vars/secrets.yml"
   vars:
     ansible_python_interpreter: "{% raw %}{{ ansible_playbook_python }}{% endraw %}"
     controller_validate_certs: false
     controller_configuration_credentials_secure_logging: false
   tasks:
   - name: Clone git repo
+    delegate_to: localhost
     block:
     - name: Create a temp directory
       ansible.builtin.tempfile:
@@ -22,13 +25,14 @@
        msg: "repos_dir: {% raw %}{{ repos_dir }}{% endraw %}"
     - name: Clone repo
       ansible.builtin.shell:
-        cmd: "git clone http://{{ gitea_user }}:{{ gitea_user_password }}@{{ ansible_host }}:{{ gitea_port | default('3030') }}/{{ gitea_user }}/{% raw %}{{ images_repo }}{% endraw %}.git {% raw %}{{ repos_dir }}{% endraw %}"
+        cmd: "git clone http://{{ gitea_user }}:{{ gitea_user_password }}@{{ ansible_host }}:{{ gitea_port | default('3030') }}/{{ gitea_user }}/{% raw %}{{ images_repo }}{% endraw %}.git {% raw %}{{ repos_dir }}/{{ images_repo }}{% endraw %}"
     - name: Debug file path
       ansible.builtin.debug:
         msg: "{% raw %}{{ repos_dir }}{% endraw %}/{% raw %}{{ images_repo }}/{{ files_path }}/{{ image_definition_file }}{% endraw %}"
 
   - name: Import image definition variables from file in git repo
-    when: not "{% raw %}{{ skip_compose }}{% endraw %}"
+    delegate_to: localhost
+    when: not skip_compose
     block:
     - name: Check if there is an image definition file
       ansible.builtin.stat:
@@ -40,11 +44,12 @@
       when: imagedefinition_file_stat.stat.exists
 
   - name: Create image installer
-    when: not "{% raw %}{{ skip_compose }}{% endraw %}"
+    when: not skip_compose
     ansible.builtin.import_role:
       name: rprakashg.vpac.create_image_installer 
 
   - name: Import kickstart definition variables from file in git repo
+    delegate_to: localhost
     block:
     - name: Check if there is a kickstart definition file
       ansible.builtin.stat:

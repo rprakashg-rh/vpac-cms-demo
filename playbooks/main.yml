@@ -4,7 +4,7 @@
 
   vars:
     controller_validate_certs: false
-  
+    controller_hostname: "{{ ansible_host }}:8443"
   tasks:
   - name: Load secrets from ansible vault
     ansible.builtin.include_vars:
@@ -14,7 +14,7 @@
   #  ansible.builtin.import_role:
   #    name: rprakashg.vpac.setup_centralized_management_system
   #  vars:
-  #    node_fqdn: 192.168.1.28
+  #    node_fqdn: "{{ ansible_host }}"
   
   - name: Configure centralized management system
     ansible.builtin.import_role:
@@ -35,3 +35,6 @@
       organization_name: vpac
       aap_repo_name: "aap"
       eda_repo_name: "eda"
+      eda_validate_certs: false
+      eda_host: "http://{{ ansible_host }}:8445"
+      eda_port: 5000
