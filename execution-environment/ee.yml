@@ -2,6 +2,8 @@
 # Definition for execution environment images
 version: 3
 
+ansible_config: './build-context/ansible.cfg'
+
 images:
   base_image:
     name: registry.redhat.io/ansible-automation-platform-26/ee-minimal-rhel9:latest
