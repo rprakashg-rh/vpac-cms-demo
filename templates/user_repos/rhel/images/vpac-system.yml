@@ -6,8 +6,7 @@ min_disks: 4
 min_size_gb: 500
 
 # blueprint details
-builder_blueprint_name: grid-platform-base
-builder_blueprint_description: "Base RHEL 9.7 image used to deploy grid platform for utilities"
+builder_blueprint_description: "Base RHEL 9.7 image used to deploy vpac systems for utilities"
 builder_blueprint_distro: "rhel-9"
 builder_compose_pkgs:
 - ansible-core
@@ -76,57 +75,3 @@ builder_compose_customizations:
       enabled: ["http", "https", "ssh", "cockpit"]
       disabled: ["telnet"]
     ports: ["9090:tcp", "22:tcp"]
-
-# Kickstart customizations
-builder_kickstart_pre: |
-  {% raw %}{{ lookup('ansible.builtin.template', 'ks-pre.j2') }}{% endraw %}
-
-builder_kickstart_post:
-- systemctl enable --now libvirtd
-- systemctl enable --now cockpit.socket
-- # Optimize xfs mount options for qcow2
-- sed -i '/libvirt\/images/s/defaults/defaults,noatime,nodiratime/' /etc/fstab
-- sed -i '/backups/s/defaults/defaults,noatime,nodiratime/' /etc/fstab
-
-builder_kickstart_options:
-- lang en_US.UTF-8
-- keyboard us
-- timezone America/Los_Angeles --utc
-- text
-- liveimg --url file:///run/install/repo/liveimg.tar.gz
-- zerombr # Clear the MBR/GPT on all detected disks
-- bootloader --location=mbr
-- clearpart --all --initlabel # Clears all partitions on sda and initializes the disk label
-- # ------------------------------------------------------------
-- # /boot/efi (unencrypted)
-- # ------------------------------------------------------------
-- part /boot/efi --fstype=efi --size=600 --ondisk=sda
-- part /boot --fstype=ext4 --size=4096 --ondisk=sda
-- part pv.01 --ondisk=sda --size=1 --grow
-- # ---------------------------------------------------------------
-- # Host OS Volumes
-- # ---------------------------------------------------------------
-- volgroup vg_system pv.01
-- logvol / --vgname=vg_system --name=lv_root --fstype=xfs --size=150000
-- logvol /home --vgname=vg_system --name=lv_home --fstype=xfs --size=200000
-- logvol swap --vgname=vg_system --name=lv_swap --recommended
-- # -------------------------------------------------------------
-- # RAID10 for VM Storage
-- # -------------------------------------------------------------
-- part raid.pv.1 --grow --ondisk=sdb
-- part raid.pv.2 --grow --ondisk=sdc
-- part raid.pv.3 --grow --ondisk=sdd
-- part raid.pv.4 --grow --ondisk=sde
-- raid pv.02 --level=10 --device=mddata raid.pv.1 raid.pv.2 raid.pv.3 raid.pv.4
-- # Create VG (Add LUKS encryption later)
-- volgroup vg_kvm pv.02
-- # ---------------------------------------------------------------
-- # VM Storage and backup (qcow2 disks)
-- # ---------------------------------------------------------------
-- logvol /var/lib/libvirt/images --vgname=vg_kvm --name=lv_images --fstype=xfs --size=1 --grow
-- logvol /backups --vgname=vg_kvm --name=lv_backups --fstype=xfs --size=500000
-- # ---------------------------------------------------------------
-- # Setup networking
-- # ---------------------------------------------------------------
-- network --bootproto=dhcp --activate
-- reboot --eject

@@ -25,12 +25,12 @@
       influxdb_org: redhat
       influxdb_bucket: vpac
       influxdb_retentionperiod: 0
-      config_gitea: true
+      config_gitea: false
       gitea_port: 3030
       gitea_admin_repos_template: ../templates/admin_repos
       gitea_user_repos_template: ../templates/user_repos
 
-      config_aap: false
+      config_aap: true
       aap_config_template: ../templates/aap_config.yml.j2
       organization_name: vpac
       aap_repo_name: "aap"

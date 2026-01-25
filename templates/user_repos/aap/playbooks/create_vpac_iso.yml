@@ -3,10 +3,11 @@
   hosts:
   - all
   vars:
+    ansible_python_interpreter: "{% raw %}{{ ansible_playbook_python }}{% endraw %}"
     controller_validate_certs: false
     controller_configuration_credentials_secure_logging: false
   tasks:
-  - name: Import image definition variables from file in git repo
+  - name: Clone git repo
     block:
     - name: Create a temp directory
       ansible.builtin.tempfile:
@@ -16,26 +17,45 @@
     - name: Set in variable
       ansible.builtin.set_fact:
         repos_dir: "{% raw %}{{ tempdir.path }}{% endraw %}"
+    - name: Debug
+      ansible.builtin.debug:
+       msg: "repos_dir: {% raw %}{{ repos_dir }}{% endraw %}"
     - name: Clone repo
       ansible.builtin.shell:
-        cmd: "git clone http://{{ gitea_user }}:{{ gitea_user_password }}@{{ ansible_host }}:{{ gitea_port | default('3030') }}/{{ gitea_user }}/{% raw %}{{ images_repo }}{% endraw %}.git {% raw %}{{ repos_dir }}{% endraw %}/images"
+        cmd: "git clone http://{{ gitea_user }}:{{ gitea_user_password }}@{{ ansible_host }}:{{ gitea_port | default('3030') }}/{{ gitea_user }}/{% raw %}{{ images_repo }}{% endraw %}.git {% raw %}{{ repos_dir }}{% endraw %}"
+    - name: Debug file path
+      ansible.builtin.debug:
+        msg: "{% raw %}{{ repos_dir }}{% endraw %}/{% raw %}{{ images_repo }}/{{ files_path }}/{{ image_definition_file }}{% endraw %}"
+
+  - name: Import image definition variables from file in git repo
+    when: not "{% raw %}{{ skip_compose }}{% endraw %}"
+    block:
     - name: Check if there is an image definition file
       ansible.builtin.stat:
-        path: "{% raw %}{{ repos_dir }}{% endraw %}/images/{% raw %}{{ files_path }}/{{ image_definition_file }}{% endraw %}"
+        path: "{% raw %}{{ repos_dir }}{% endraw %}/{% raw %}{{ images_repo }}/{{ files_path }}/{{ image_definition_file }}{% endraw %}"
       register: imagedefinition_file_stat
-      delegate_to: localhost
     - name: Include vars
       ansible.builtin.include_vars:
-        file: "{% raw %}{{ repos_dir }}{% endraw %}/images/{% raw %}{{ files_path }}/{{ image_definition_file }}{% endraw %}"
-      when: imagedefinition_file_stat.exists
-    delegate_to: localhost
+        file: "{% raw %}{{ repos_dir }}{% endraw %}/{% raw %}{{ images_repo }}/{{ files_path }}/{{ image_definition_file }}{% endraw %}"
+      when: imagedefinition_file_stat.stat.exists
 
-  
   - name: Create image installer
+    when: not "{% raw %}{{ skip_compose }}{% endraw %}"
     ansible.builtin.import_role:
       name: rprakashg.vpac.create_image_installer 
 
+  - name: Import kickstart definition variables from file in git repo
+    block:
+    - name: Check if there is a kickstart definition file
+      ansible.builtin.stat:
+        path: "{% raw %}{{ repos_dir }}{% endraw %}/{% raw %}{{ images_repo }}/{{ files_path }}/{{ kickstart_definition_file }}{% endraw %}"
+      register: kickstartdefinition_file_stat
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: "{% raw %}{{ repos_dir }}{% endraw %}/{% raw %}{{ images_repo }}/{{ files_path }}/{{ kickstart_definition_file }}{% endraw %}"
+      when: kickstartdefinition_file_stat.stat.exists
+
   - name: Create iso with custom kickstart
     ansible.builtin.import_role:
-      name: rprakashg.vpac.create_iso
+      name: rprakashg.vpac.inject_ks_into_iso
 ...

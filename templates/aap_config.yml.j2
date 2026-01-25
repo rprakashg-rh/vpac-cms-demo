@@ -27,8 +27,8 @@ controller_hosts:
 - name: imagebuilder
   inventory: "Image Builder"
   variables:
-    ansible_connection: local
-    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    ansible_host: 192.168.1.28
+    ansible_port: 22
   enabled: true
 - name: dtech2026dell1
   inventory: Virtualization Hosts
@@ -95,7 +95,6 @@ controller_credentials:
   inputs:   
     username: "{{ gitea_user }}"
     password: "{{ gitea_user_password }}"
-
 - name: Image Builder Credentials
   organization: "{{ organization_name }}"
   credential_type: Machine
@@ -103,14 +102,12 @@ controller_credentials:
     username: "{{ admin_user }}"
     password: "{{ admin_user_password }}"
     become_password: "{{ admin_user_password }}"
-
 - name: Controller API Credentials
   organization: "{{ organization_name }}"
   credential_type: Controller API credentials
   inputs:
     controller_username: "{{ aap_user }}"
     controller_password: "{{ aap_user_password }}"
-
 - name: Demo vault
   organization: "{{ organization_name }}"  
   credential_type: Vault
@@ -138,9 +135,12 @@ controller_templates:
   execution_environment: Demo execution environment
   become_enabled: true
   extra_vars:
+    builder_blueprint_name: "vpac-rhel9-base"
+    skip_compose: false
     images_repo: "rhel"
     files_path: "images"
     image_definition_file: vpac-system.yml
+    kickstart_definition_file: ks.yml
 
 eda_users:
 - username: "{{ aap_user }}"
