@@ -20,8 +20,8 @@ controller_credential_types:
     - controller_password
   injectors:
     extra_vars:
-      controller_username: !unsafe "{{ controller_username }}"
-      controller_password: !unsafe "{{ controller_password }}"
+      controller_username: !unsafe "{{ aap_username }}"
+      controller_password: !unsafe "{{ aap_password }}"
 
 controller_hosts:
 - name: imagebuilder
@@ -113,8 +113,8 @@ controller_credentials:
   organization: "{{ organization_name }}"
   credential_type: Controller API credentials
   inputs:
-    controller_username: "{{ aap_user }}"
-    controller_password: "{{ aap_user_password }}"
+    controller_username: "{{ aap_username }}"
+    controller_password: "{{ aap_password }}"
 - name: Demo vault
   organization: "{{ organization_name }}"  
   credential_type: Vault

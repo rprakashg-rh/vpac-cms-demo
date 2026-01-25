@@ -1,7 +1,7 @@
 ---
 collections:
   - name: ansible.platform
-    version: ">=2.5.0" # for AAP 2.6 this should be 2.6.0
+    version: ">=2.6.0" # for AAP 2.6 this should be 2.6.0
   - name: ansible.hub
     version: ">=1.0.0"
   - name: ansible.controller
