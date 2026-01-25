@@ -10,7 +10,7 @@ on:
 env:
     IMAGE_NAME: ${{ secrets.EE_IMAGE_NAME }}
     IMAGE_REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
-    AUTOMATION_HUB_TOKEN: ${{ secrets.AUTOMATION_HUB_TOKEN }}
+    ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN: ${{ secrets.AUTOMATION_HUB_TOKEN }}
 jobs:
   build:
     runs-on: ubuntu-latest
