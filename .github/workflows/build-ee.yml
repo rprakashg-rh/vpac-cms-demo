@@ -42,7 +42,8 @@ jobs:
         ansible-builder create -f execution-environment/ee.yml \
             --output-filename Containerfile \
             --context execution-environment/build-context
-            
+      env:
+        AUTOMATION_HUB_TOKEN: ${{ secrets.AUTOMATION_HUB_TOKEN }}      
     - name: Build EE image
       uses: redhat-actions/buildah-build@v2
       with:
