@@ -37,32 +37,34 @@ jobs:
         username: ${{ secrets.REGISTRY_USER }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    #- name: Build execution enironment with ansible builder
-    #  working-directory: execution-environment
-    #  run: |
-    #    ansible-builder build \
-
-    #  env:
-    #    ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN: ${{ secrets.AUTOMATION_HUB_TOKEN }}
-    
-    - name: Generate Containerfile with ansible-builder
+    - name: Build execution enironment with ansible builder
+      working-directory: execution-environment
       run: |
-        ansible-builder create -f execution-environment/ee.yml \
-            --output-filename Containerfile \
-            --context execution-environment/build-context
+        ansible-builder build \
+          --build-arg ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }} \
+          -file=ee.yml \
+          --tag=${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          --tag=${{ env.IMAGE_NAME }}:latest \
+          -vvv
+    
+    #- name: Generate Containerfile with ansible-builder
+    #  run: |
+    #    ansible-builder create -f execution-environment/ee.yml \
+    #        --output-filename Containerfile \
+    #        --context execution-environment/build-context
 
-    - name: Build EE image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: ${{ env.IMAGE_NAME }}
-        tags: | 
-          latest
-          ${{ github.sha }}
-        context: execution-environment/build-context
-        containerfiles: |
-          execution-environment/build-context/Containerfile
-        build-args: |
-          ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
+    #- name: Build EE image
+    #  uses: redhat-actions/buildah-build@v2
+    #  with:
+    #    image: ${{ env.IMAGE_NAME }}
+    #    tags: | 
+    #      latest
+    #      ${{ github.sha }}
+    #    context: execution-environment/build-context
+    #    containerfiles: |
+    #      execution-environment/build-context/Containerfile
+    #    build-args: |
+    #      ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
 
     - name: Login to registry
       uses: redhat-actions/podman-login@v1
@@ -80,8 +82,8 @@ jobs:
             ${{ github.sha }}
         registry: ${{ env.IMAGE_REGISTRY }}
 
-    - name: Save the Containerfile as build artifact
-      uses: actions/upload-artifact@v6
-      with:
-        name: containerfile
-        path: execution-environment/build-context/Containerfile  
+    #- name: Save the Containerfile as build artifact
+    #  uses: actions/upload-artifact@v6
+    #  with:
+    #    name: containerfile
+    #    path: execution-environment/build-context/Containerfile  
