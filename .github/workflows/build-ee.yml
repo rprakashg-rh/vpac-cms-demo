@@ -42,7 +42,7 @@ jobs:
       run: |
         ansible-builder build \
           --build-arg ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }} \
-          -file=ee.yml \
+          --file=ee.yml \
           --tag=${{ env.IMAGE_NAME }}:${{ github.sha }} \
           --tag=${{ env.IMAGE_NAME }}:latest \
           -vvv
