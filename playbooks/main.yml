@@ -11,11 +11,11 @@
     ansible.builtin.include_vars:
       file: "./vars/secrets.yml"
 
-  #- name: Setup centralized management system
-  #  ansible.builtin.import_role:
-  #    name: rprakashg.vpac.setup_centralized_management_system
-  #  vars:
-  #    node_fqdn: "{{ ansible_host }}"
+  - name: Setup centralized management system
+    ansible.builtin.import_role:
+      name: rprakashg.vpac.setup_centralized_management_system
+    vars:
+      node_fqdn: "{{ ansible_host }}"
   
   - name: Configure centralized management system
     ansible.builtin.import_role:

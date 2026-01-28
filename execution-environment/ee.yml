@@ -2,6 +2,9 @@
 # Definition for execution environment images
 version: 3
 
+build_arg_defaults:
+  ANSIBLE_GALAXY_CLI_COLLECTION_OPTS: "-v"
+  ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN: "$ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN"
 additional_build_steps:
   prepend_galaxy:
   # Environment variables used for Galaxy client configurations

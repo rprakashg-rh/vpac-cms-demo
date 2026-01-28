@@ -1,0 +1,5 @@
+# Controller execution environments
+controller_execution_environments:
+- name: Demo execution environment
+  image: quay.io/rgopinat/vpac-cms-demo-ee:latest
+  pull: always
