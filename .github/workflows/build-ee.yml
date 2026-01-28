@@ -37,11 +37,20 @@ jobs:
         username: ${{ secrets.REGISTRY_USER }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
+    #- name: Build execution enironment with ansible builder
+    #  working-directory: execution-environment
+    #  run: |
+    #    ansible-builder build \
+
+    #  env:
+    #    ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN: ${{ secrets.AUTOMATION_HUB_TOKEN }}
+    
     - name: Generate Containerfile with ansible-builder
       run: |
         ansible-builder create -f execution-environment/ee.yml \
             --output-filename Containerfile \
-            --context execution-environment/build-context      
+            --context execution-environment/build-context
+
     - name: Build EE image
       uses: redhat-actions/buildah-build@v2
       with:
