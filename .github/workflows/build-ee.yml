@@ -55,16 +55,16 @@ jobs:
     #      execution-environment/build-context/Containerfile
 
     - name: Build execution environment image
-      working-directory: ./execution-environment
+      working-directory: execution-environment
       run: |
         ansible-builder build \
           --build-arg ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
           --build-arg ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="--pre" \
-          --file ee.yml \
+          --file execution-environment/ee.yml \
           --tag ${{ env.IMAGE_NAME }}:latest \
           --tag ${{ env.IMAGE_NAME }}:${{ github.sha }} \
           -vvv  
-          
+
     - name: Login to registry
       uses: redhat-actions/podman-login@v1
       with:
