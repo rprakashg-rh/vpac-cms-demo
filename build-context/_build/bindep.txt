@@ -1,4 +1,0 @@
-'kubernetes-client [platform:fedora]  # from collection community.kubernetes, kubernetes.core'
-'openshift-clients [platform:rhel-9]  # from collection kubernetes.core'
-libxml2-devel [platform:rpm]
-libxslt-devel [platform:rpm]
