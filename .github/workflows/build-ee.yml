@@ -10,6 +10,9 @@ on:
 env:
     IMAGE_NAME: ${{ secrets.EE_IMAGE_NAME }}
     IMAGE_REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
+    ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN: ${{ secrets.AUTOMATION_HUB_TOKEN }}
+    ANSIBLE_GALAXY_CLI_COLLECTION_OPTS: "--pre"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -65,7 +68,7 @@ jobs:
       with:
         registry: ${{ env.IMAGE_REGISTRY }}
         username: ${{ secrets.REGISTRY_USER }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+        password: ${{ secrets.QUAY_PASSWORD }}
 
     - name: Push EE image to registry
       uses: redhat-actions/push-to-registry@v2
