@@ -5,7 +5,9 @@
   vars:
     aap_validate_certs: false
     aap_hostname: "{{ ansible_host }}:8443"
-    eda_validate_certs: false
+    aap_validate_certs: false
+
+    controller_configuration_credentials_secure_logging: false
   tasks:
   - name: Load secrets from ansible vault
     ansible.builtin.include_vars:

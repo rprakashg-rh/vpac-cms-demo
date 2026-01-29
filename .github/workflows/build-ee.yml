@@ -39,30 +39,59 @@ jobs:
         registry: registry.redhat.io
         username: ${{ secrets.REGISTRY_USER }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    
-    - name: Generate Containerfile with ansible-builder
-      working-directory: execution-environment  
+        
+    - name: Create an ansible.cfg file
+      working-directory: build-context
       run: |
-        ansible-builder create -f ee.yml \
-            --output-filename Containerfile \
-            --context build-context
+        cat <<EOF > /build-context/ansible.cfg
+        [galaxy]
+        server_list = automation_hub_validated,automation_hub_published
 
-    - name: Build EE image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: ${{ env.IMAGE_NAME }}
-        tags: | 
-          latest
-          ${{ github.sha }}
-        context: execution-environment/build-context
-        containerfiles: |
-          execution-environment/build-context/Containerfile
-        build-args: |
-          ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
-        envs:
-          ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
-          ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="--pre"
+        [galaxy_server.automation_hub_validated]
+        url = https://console.redhat.com/api/automation-hub/content/validated
+        auth_url = https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+        token = "${{ secrets.AUTOMATION_HUB_TOKEN }}"
+
+        [galaxy_server.automation_hub_published]
+        url = https://console.redhat.com/api/automation-hub/content/published
+        auth_url = https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+        token = "${{ secrets.AUTOMATION_HUB_TOKEN }}"
+
+        EOF
+
+    #- name: Generate Containerfile with ansible-builder
+    #  working-directory: execution-environment  
+    #  run: |
+    #    ansible-builder create -f ee.yml \
+    #        --output-filename Containerfile \
+    #        --context build-context
+
+    #- name: Build EE image
+    #  uses: redhat-actions/buildah-build@v2
+    #  with:
+    #    image: ${{ env.IMAGE_NAME }}
+    #    tags: | 
+    #      latest
+    #      ${{ github.sha }}
+    #    context: execution-environment/build-context
+    #    containerfiles: |
+    #      execution-environment/build-context/Containerfile
+    #    build-args: |
+    #      ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
+    #    envs:
+    #      ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
+    #      ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="--pre"
     
+    - name: Build EE container image using ansible builder
+      working-directory: build-context
+      run: |
+        ansible-builder build \
+        --build-arg=ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }} \
+        --file=ee.yml \
+        --tag=${{ env.IMAGE_NAME }}:latest
+        --tag=${{ env.IMAGE_NAME }}:${{ github.sha }} \
+        -vvv
+
     - name: Login to registry
       uses: redhat-actions/podman-login@v1
       with:
