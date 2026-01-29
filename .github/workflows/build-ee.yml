@@ -57,9 +57,8 @@ jobs:
     - name: Build execution environment image
       working-directory: execution-environment
       run: |
-        pwd 
         ansible-builder build \
-          --build-arg ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
+          --build-arg ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN="${{ secrets.AUTOMATION_HUB_TOKEN }}" \
           --build-arg ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="--pre" \
           --file=ee.yml \
           --tag=${{ env.IMAGE_NAME }}:latest \
