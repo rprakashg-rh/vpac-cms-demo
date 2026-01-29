@@ -1,7 +1,7 @@
 ARG EE_BASE_IMAGE="registry.redhat.io/ansible-automation-platform-26/ee-minimal-rhel9:latest"
 ARG PYCMD="/usr/bin/python3"
 ARG PKGMGR_PRESERVE_CACHE=""
-ARG ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="--pre"
+ARG ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="-v"
 ARG ANSIBLE_GALAXY_CLI_ROLE_OPTS=""
 ARG ANSIBLE_INSTALL_REFS="ansible-core==2.16.9 ansible-runner"
 ARG PKGMGR="/usr/bin/microdnf"

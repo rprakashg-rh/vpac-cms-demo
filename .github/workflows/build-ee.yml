@@ -60,7 +60,7 @@ jobs:
         ansible-builder build \
           --build-arg ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
           --build-arg ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="--pre" \
-          --file=ee.yml \
+          --file=execution-environment/ee.yml \
           --tag=${{ env.IMAGE_NAME }}:latest \
           --tag=${{ env.IMAGE_NAME }}:${{ github.sha }} \
           -vvv  
