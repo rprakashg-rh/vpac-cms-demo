@@ -54,6 +54,8 @@ jobs:
         context: execution-environment/build-context
         containerfiles: |
           execution-environment/build-context/Containerfile
+        build-args: |
+          ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
         envs:
           ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
           ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="--pre"
