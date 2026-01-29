@@ -21,13 +21,6 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
 
-    - name: Login to registry
-      uses: redhat-actions/podman-login@v1
-      with:
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ secrets.REGISTRY_USER }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -62,10 +55,17 @@ jobs:
         containerfiles: |
           execution-environment/build-context/Containerfile
         build-args: |
-          ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN="${{ secrets.AUTOMATION_HUB_TOKEN }}"
+          ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
         envs:
-          ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN="${{ secrets.AUTOMATION_HUB_TOKEN }}"
+          ANSIBLE_GALAXY_SERVER_RH_HUB_TOKEN=${{ secrets.AUTOMATION_HUB_TOKEN }}
           ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="--pre"
+    
+    - name: Login to registry
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: ${{ env.IMAGE_REGISTRY }}
+        username: ${{ secrets.REGISTRY_USER }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - name: Push EE image to registry
       uses: redhat-actions/push-to-registry@v2
