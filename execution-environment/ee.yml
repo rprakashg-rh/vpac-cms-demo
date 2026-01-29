@@ -7,7 +7,7 @@ build_arg_defaults:
 
 additional_build_steps:
   prepend_base:
-  - COPY build-context/ansible.cfg /etc/ansible/ansible.cfg
+  - COPY _build/configs/ansible.cfg /etc/ansible/ansible.cfg
 
 additional_build_files:
   - src: build-context/ansible.cfg
