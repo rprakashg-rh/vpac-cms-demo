@@ -1,4 +1,7 @@
-ansible-core>=2.15.3
+jmespath
+six
+psutil
+ansible-core>=2.16.9
 boto3
 netaddr
 passlib

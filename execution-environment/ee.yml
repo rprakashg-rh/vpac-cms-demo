@@ -2,14 +2,18 @@
 # Definition for execution environment images
 version: 3
 
+options:
+  package_manager_path: /usr/bin/microdnf
+
 build_arg_defaults:
   ANSIBLE_GALAXY_CLI_COLLECTION_OPTS: "-v --pre"
 
 additional_build_steps:
   prepend_base:
   - COPY _build/configs/ansible.cfg /etc/ansible/ansible.cfg
-  prepend_final: |
-    RUN dnf install -y 'dnf-command(config-manager)' && rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && /usr/bin/crb enable && dnf update -y && dnf install git -y && dnf clean all && ansible --version
+  #prepend_final: |
+  #  RUN dnf install -y 'dnf-command(config-manager)' && rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && /usr/bin/crb enable && dnf update -y && dnf install git -y && dnf clean all && ansible --version && git version
+  # Environment variables used for Galaxy client configurations
 
 additional_build_files:
   - src: build-context/ansible.cfg
@@ -17,17 +21,15 @@ additional_build_files:
 
 images:
   base_image:
-    name: quay.io/centos/centos:stream9 #registry.redhat.io/ansible-automation-platform-25/ee-minimal-rhel9:latest
+    name: registry.redhat.io/ansible-automation-platform-26/ee-minimal-rhel9:latest
 
 dependencies:
   ansible_core:
-    package_pip: ansible-core==2.15.3
+    package_pip: ansible-core==2.16.9
   ansible_runner:
     package_pip: ansible-runner
   galaxy: requirements.yml
   python: requirements.txt
   system: bindep.txt
-  
-options:
-  package_manager_path: /usr/bin/microdnf
+    
 ...

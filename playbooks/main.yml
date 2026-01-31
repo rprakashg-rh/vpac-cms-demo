@@ -36,3 +36,10 @@
       organization_name: vpac
       aap_repo_name: "aap"
       eda_repo_name: "eda"
+      loki_port: 3100
+      loki_endpoint: "http://{{ ansible_host }}:{{ loki_port }}"
+      influxdb_port: 8086
+      innfluxdb_endpoint: "http://{{ ansible_host }}:{{ influxdb_port }}"
+      influxdb_org: redhat
+      influxdb_bucket: vpac
+      

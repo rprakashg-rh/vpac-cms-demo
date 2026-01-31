@@ -179,6 +179,22 @@ controller_templates:
     images_repo: "rhel"
     files_path: "config"
     config_file: vpac.yml
+- name: Deploy Otel collector 
+  organization: "{{ organization_name }}"
+  inventory: Virtualization Hosts
+  project: cms
+  playbook: playbooks/deploy_otel_collector.yml
+  ask_variables_on_launch: true
+  credentials:
+  - Virtual Host Credentials
+  become_enabled: true
+  extra_vars:
+    loki:
+      endpoint: "{{ loki_endpoint }}"
+    influxdb:
+      endpoint: "{{ innfluxdb_endpoint }}"
+      org: "{{ influxdb_org }}"
+      bucket: "{{ influxdb_bucket }}"
 
 controller_workflows:
 - name: Deploy a virtual protecion automation environment
