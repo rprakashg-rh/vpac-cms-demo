@@ -41,7 +41,7 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
         
     - name: Create an ansible.cfg file
-      working-directory: ${{ github.repository }}/execution-environment/build-context
+      working-directory: execution-environment/build-context
       run: |
         cat <<EOF > _build/configs/ansible.cfg
         [galaxy]
