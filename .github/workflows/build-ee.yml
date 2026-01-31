@@ -43,7 +43,7 @@ jobs:
     - name: Create an ansible.cfg file
       working-directory: execution-environment/build-context
       run: |
-        cat <<EOF > _build/configs/ansible.cfg
+        cat <<EOF > ansible.cfg
         [galaxy]
         server_list = automation_hub_validated,automation_hub_published
 
