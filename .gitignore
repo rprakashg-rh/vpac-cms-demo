@@ -1,6 +1,8 @@
 playbooks/ansible.cfg
-execution-environment/build-context/scripts
-!execution-environment/build-context/_build/configs
+
 !execution-environment/build-context/
+!execution-environment/build-context/_build/
+!execution-environment/build-context/_build/configs
+
 execution-environment/build-context/_build/*
 **/.DS_Store
