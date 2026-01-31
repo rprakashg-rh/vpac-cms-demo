@@ -41,9 +41,9 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
         
     - name: Create an ansible.cfg file
-      working-directory: build-context
+      working-directory: ${{ github.repository }}/execution-environment/build-context
       run: |
-        cat <<EOF > ${{ github.workspace }}/execution-environment/build-context/_build/configs/ansible.cfg
+        cat <<EOF > _build/configs/ansible.cfg
         [galaxy]
         server_list = automation_hub_validated,automation_hub_published
 
