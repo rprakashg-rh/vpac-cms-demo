@@ -4,5 +4,8 @@ playbooks/ansible.cfg
 !execution-environment/build-context/_build/
 !execution-environment/build-context/_build/configs
 
+execution-environment/build-context/ansible.cfg
+execution-environment/build-context/Containerfile
+
 execution-environment/build-context/_build/*
 **/.DS_Store
