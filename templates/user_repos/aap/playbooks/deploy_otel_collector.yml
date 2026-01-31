@@ -1,0 +1,15 @@
+---
+# This playbook deploys open telemetry collector to virtualization hosts
+- name: Deploy otel collector
+  hosts: virtualization_hosts
+  gather_facts: yes
+
+  vars:
+    ansible_python_interpreter: "{% raw %}{{ ansible_playbook_python }}{% endraw %}"
+    aap_validate_certs: false
+    aap_configuration_secure_logging: false
+  
+  tasks:
+  - name: run otel collector role
+    ansible.builtin.import_role:
+      name: rprakashg.vpac.deploy_otelcollector
