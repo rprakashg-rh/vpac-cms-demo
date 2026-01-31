@@ -43,7 +43,11 @@ jobs:
       run: |
         cat <<EOF > ansible.cfg
         [galaxy]
-        server_list = automation_hub_validated,automation_hub_published
+        server_list = public_galaxy,automation_hub_validated,automation_hub_published
+        ignore_certs = true
+        
+        [galaxy_server.public_galaxy]
+        url = https://galaxy.ansible.com/api/
 
         [galaxy_server.automation_hub_validated]
         url = https://console.redhat.com/api/automation-hub/content/validated
@@ -57,6 +61,11 @@ jobs:
 
         EOF
 
+    - name: Print ansible.cfg file
+      working-directory: execution-environment/build-context
+      run: |
+        cat ansible.cfg
+              
     - name: Generate Containerfile with ansible-builder
       working-directory: execution-environment  
       run: |
