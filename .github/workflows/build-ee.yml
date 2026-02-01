@@ -39,7 +39,7 @@ jobs:
 
     - name: Dnf update
       run: dnf upgrade --refresh -y  
-      
+
     - name: Workaround open podman-login action issue
       env:
         auth: "{ \"auths\": {} }"
@@ -55,10 +55,10 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
         auth_file_path: /run/containers/0/auth.json
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11.*'
+    #- name: Set up Python
+    #  uses: actions/setup-python@v5
+    #  with:
+    #    python-version: '3.11.*'
 
     - name: Install ansible-builder
       run: |
