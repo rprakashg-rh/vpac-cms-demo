@@ -21,3 +21,4 @@ collections:
   - name: https://github.com/rprakashg/vpac.git
     type: git
     version: main
+...

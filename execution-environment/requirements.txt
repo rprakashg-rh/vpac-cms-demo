@@ -1,2 +1,2 @@
 jmespath
-ansible-core>=2.16.*
+#ansible-core>=2.16.*
