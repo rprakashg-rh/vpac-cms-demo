@@ -37,9 +37,6 @@ jobs:
         activation_key: ${{ secrets.ACTIVATION_KEY }}
       run: subscription-manager register --org=$orgid --activationkey=$activation_key
 
-    - name: Dnf update
-      run: dnf upgrade --refresh -y  
-
     - name: Workaround open podman-login action issue
       env:
         auth: "{ \"auths\": {} }"
@@ -97,7 +94,8 @@ jobs:
       run: |
         ansible-builder create -f ee.yml \
             --output-filename Containerfile \
-            --context build-context
+            --context build-context \
+            -v 
 
     - name: Build EE image
       uses: redhat-actions/buildah-build@v2
