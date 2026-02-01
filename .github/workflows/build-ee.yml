@@ -15,12 +15,42 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    container:
+      image: registry.access.redhat.com/ubi9/ubi
+      options: --privileged
+    
     permissions:
       contents: read
       packages: write
+
     steps:
     - name: Checkout source
       uses: actions/checkout@v6
+
+    - name: Get container tools in UBI builder
+      run: dnf -y install podman buildah skopeo
+    
+    - name: Access a subscription via activation key
+      env:
+        SMDEV_CONTAINER_OFF: 1
+        orgid: ${{ secrets.ORGID }}
+        activation_key: ${{ secrets.ACTIVATION_KEY }}
+      run: subscription-manager register --org=$orgid --activationkey=$activation_key
+    
+    - name: Workaround open podman-login action issue
+      env:
+        auth: "{ \"auths\": {} }"
+      run: |
+        mkdir -p $HOME/.docker
+        echo $auth > $HOME/.docker/config.json
+    
+    - name: Login to regisry.redhat.io
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: registry.redhat.io
+        username: ${{ secrets.REGISTRY_USER }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+        auth_file_path: /run/containers/0/auth.json
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -30,13 +60,6 @@ jobs:
     - name: Install ansible-builder
       run: |
         pip install ansible-builder==3.*
-    
-    - name: Login to regisry.redhat.io
-      uses: redhat-actions/podman-login@v1
-      with:
-        registry: registry.redhat.io
-        username: ${{ secrets.REGISTRY_USER }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
         
     - name: Create an ansible.cfg file
       working-directory: execution-environment/build-context
@@ -90,6 +113,7 @@ jobs:
         registry: ${{ env.IMAGE_REGISTRY }}
         username: ${{ secrets.REGISTRY_USER }}
         password: ${{ secrets.QUAY_PASSWORD }}
+        auth_file_path: /run/containers/0/auth.json
 
     - name: Push EE image to registry
       uses: redhat-actions/push-to-registry@v2
