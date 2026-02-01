@@ -59,7 +59,7 @@ jobs:
 
     - name: Install ansible-builder
       run: |
-        pip install ansible-builder==3.*
+        pip3 install ansible-builder==3.*
         
     - name: Create an ansible.cfg file
       working-directory: execution-environment/build-context
