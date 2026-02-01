@@ -4,10 +4,6 @@ version: 3
 
 options:
   package_manager_path: /usr/bin/microdnf
-  relax_passwd_permissions: false
-  skip_ansible_check: true
-  tags:
-  - vpac-cms-demo-ee:latest
   
 build_arg_defaults:
   ANSIBLE_GALAXY_CLI_COLLECTION_OPTS: "-v --pre"
