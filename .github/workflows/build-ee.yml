@@ -59,7 +59,7 @@ jobs:
 
     - name: Install ansible-builder
       run: |
-        dnf install --enablerepo=ansible-automation-platform-2.6-for-rhel-9-x86_64-rpms ansible-builder 
+        dnf install --enablerepo=ansible-automation-platform-2.6-for-rhel-9-x86_64-rpms -y ansible-builder 
         
     - name: Create an ansible.cfg file
       working-directory: execution-environment/build-context
